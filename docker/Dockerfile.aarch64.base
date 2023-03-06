@@ -86,11 +86,6 @@ RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.d
         git-lfs \
 && rm -rf /var/lib/apt/lists/*
 
-# Install Pytorch and ONNX
-RUN wget https://nvidia.box.com/shared/static/p57jwntv436lfrd78inwl7iml6p13fzh.whl -O torch-1.8.0-cp36-cp36m-linux_aarch64.whl && \
-        apt-get update && apt-get install -y libopenblas-base libopenmpi-dev && \
-        python3 -m pip install -U numpy torch-1.8.0-cp36-cp36m-linux_aarch64.whl onnx
-
 # Nvidia container runtime mounts cuda libraries from the host into the container, but dpkg still
 # thinks that they are not installed. Tell dpkg that these libraries are installed so VPI's
 # dependencies will be satisfied.
@@ -155,6 +150,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     patchelf \
     rapidjson-dev \
     zlib1g-dev \
+    nvidia-cudnn8 \
 && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /opt/tritonserver && cd /opt/tritonserver \
@@ -164,39 +160,6 @@ RUN mkdir -p /opt/tritonserver && cd /opt/tritonserver \
 
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/tritonserver/lib"
 
-# Install perception_pcl
-RUN mkdir -p /opt/ros/foxy/src && cd /opt/ros/foxy/src \
-    && git clone https://github.com/ros-perception/pcl_msgs.git && cd pcl_msgs && git checkout ros2 && cd .. \
-    && git clone https://github.com/ros-perception/perception_pcl.git \
-    && source /opt/ros/foxy/setup.bash \
-    && cd /opt/ros/foxy \
-    && rosdep install -y --ignore-src --from-paths src --rosdistro foxy \
-    && colcon build --merge-install --packages-up-to pcl_conversions \
-    && rm -Rf src logs build
-
-# Install sensor_msgs_py
-RUN mkdir -p /opt/ros/foxy/src && cd /opt/ros/foxy/src \
-    && git clone https://github.com/ros2/common_interfaces.git && cd common_interfaces && git checkout 2.2.3 && cd .. \
-    && source /opt/ros/foxy/setup.bash \
-    && cd /opt/ros/foxy \
-    && rosdep install -y --ignore-src --from-paths src --rosdistro foxy \
-    && colcon build --merge-install --packages-up-to sensor_msgs_py \
-    && rm -Rf src logs build
-
-# Install nav2
-RUN mkdir -p /opt/ros/foxy/src && cd /opt/ros/foxy/src \
-    && git clone https://github.com/ros-planning/navigation2.git && cd navigation2 && git checkout foxy-devel && cd .. \
-    && git clone https://github.com/BehaviorTree/BehaviorTree.CPP.git && cd BehaviorTree.CPP && git checkout tags/3.6.0 && cd .. \
-    && git clone https://github.com/ros/angles.git && cd angles && git checkout ros2 && cd .. \
-    && git clone https://github.com/ros2/rviz.git && cd rviz && git checkout foxy && cd .. \
-    && git clone https://github.com/SteveMacenski/slam_toolbox.git && cd slam_toolbox && git checkout foxy-devel && cd .. \
-    && git clone https://github.com/ros-planning/navigation_msgs.git && cd navigation_msgs && git checkout foxy && cd .. \
-    #&& git clone https://github.com/ros-simulation/gazebo_ros_pkgs.git && cd gazebo_ros_pkgs && git checkout foxy && cd .. \
-    && git clone https://github.com/ompl/ompl.git && cd ompl && cd .. \
-    && git clone https://github.com/ros/resource_retriever.git && cd resource_retriever && git checkout foxy && cd .. \
-    && git clone https://github.com/ros-visualization/interactive_markers.git && cd interactive_markers && git checkout foxy && cd .. \
-    && git clone https://github.com/ros-perception/laser_geometry.git && cd laser_geometry && git checkout foxy && cd ..
-    
 # Upgrade cmake to latest
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null \
     && echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ bionic main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null \
@@ -206,40 +169,10 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
     && apt-get install -y cmake \
     && cmake --version
 
-RUN source /opt/ros/foxy/setup.bash \
-    && cd /opt/ros/foxy \
-    && rosdep install -y -r --ignore-src --from-paths src --rosdistro foxy \
-    && colcon build --merge-install --packages-up-to-regex nav2* --packages-ignore nav2_system_tests \
-    && rm -Rf src logs build
-
-# install velodyne dependencies
-RUN mkdir -p /opt/ros/foxy/src && cd /opt/ros/foxy/src \
-    && git clone https://github.com/ros/diagnostics.git && cd diagnostics && git checkout foxy && cd .. \
-    && source /opt/ros/foxy/setup.bash \
-    && cd /opt/ros/foxy \
-    && rosdep install -y --ignore-src --from-paths src --rosdistro foxy \
-    && colcon build --merge-install --packages-up-to-regex diagnostics* \
-    && rm -Rf src logs build
-
 # Add MQTT binaries and libraries
 # Note: VPN cannot be on for pymongo download
 RUN python3 -m pip install -U \
   pymongo paho-mqtt
-
-RUN mkdir -p /opt/ros/foxy/src && cd /opt/ros/foxy/src \
-    && git clone https://github.com/ipa320/vda5050_msgs.git vda5050_root && cd vda5050_root && git checkout ros2 \
-    && cd .. && mv vda5050_root/vda5050_msgs/ vda5050_msgs \
-    && rm -rf vda5050_root \
-    && source /opt/ros/foxy/setup.bash \
-    && cd /opt/ros/foxy/ && colcon build --merge-install --packages-up-to vda5050_msgs \
-    && rm -Rf logs build
-
-RUN mkdir -p /opt/ros/foxy/src && cd /opt/ros/foxy/src \
-    && git clone https://github.com/RobotWebTools/rosbridge_suite.git && cd rosbridge_suite && git checkout ros2 \
-    && cd .. \
-    && source /opt/ros/foxy/setup.bash \
-    && cd /opt/ros/foxy/ && colcon build --merge-install --packages-up-to rosbridge_library \
-    && rm -Rf logs build
 
 # Build googletest
 RUN cd /usr/src/googletest && cmake . && cmake --build . --target install
