@@ -139,7 +139,6 @@ if [[ $PLATFORM == "aarch64" ]]; then
     # Mount the CUDA 10 libs
     DOCKER_ARGS+=("-v /usr/local/cuda-10.2/targets/aarch64-linux/lib/:/usr/local/cuda-10.2/targets/aarch64-linux/lib/")
     DOCKER_ARGS+=("-v /usr/bin/tegrastats:/usr/bin/tegrastats")
-    DOCKER_ARGS+=("-v /usr/bin/tegrastats:/usr/bin/tegrastats")
     DOCKER_ARGS+=("-v /tmp/argus_socket:/tmp/argus_socket")
     DOCKER_ARGS+=("-v /usr/lib/aarch64-linux-gnu/tegra:/usr/lib/aarch64-linux-gnu/tegra")
     DOCKER_ARGS+=("-v /usr/src/jetson_multimedia_api:/usr/src/jetson_multimedia_api")
