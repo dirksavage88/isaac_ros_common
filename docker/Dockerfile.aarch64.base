@@ -138,27 +138,27 @@ RUN echo "source /opt/ros/foxy/install/setup.bash" > /opt/ros/foxy/setup.bash
 ENV RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
 # Install Triton server 2.13 from https://github.com/triton-inference-server/server/releases/tag/v2.13.0
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    autoconf \
-    automake \
-    libb64-dev \
-    libcurl4-openssl-dev \
-    libopenblas-dev \
-    libre2-dev \
-    libssl-dev \
-    libtool \
-    patchelf \
-    rapidjson-dev \
-    zlib1g-dev \
-    nvidia-cudnn8 \
-&& rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get install -y --no-install-recommends \
+#    autoconf \
+#    automake \
+#    libb64-dev \
+#    libcurl4-openssl-dev \
+#    libopenblas-dev \
+#    libre2-dev \
+#    libssl-dev \
+#    libtool \
+#    patchelf \
+#    rapidjson-dev \
+#    zlib1g-dev \
+#    nvidia-cudnn8 \
+#&& rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /opt/tritonserver && cd /opt/tritonserver \
-    && wget https://github.com/triton-inference-server/server/releases/download/v2.13.0/tritonserver2.13.0-jetpack4.6.tgz \
-    && tar -xzvf tritonserver2.13.0-jetpack4.6.tgz \
-    && rm tritonserver2.13.0-jetpack4.6.tgz
+#RUN mkdir -p /opt/tritonserver && cd /opt/tritonserver \
+#    && wget https://github.com/triton-inference-server/server/releases/download/v2.13.0/tritonserver2.13.0-jetpack4.6.tgz \
+#    && tar -xzvf tritonserver2.13.0-jetpack4.6.tgz \
+#    && rm tritonserver2.13.0-jetpack4.6.tgz
 
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/tritonserver/lib"
+#ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/tritonserver/lib"
 
 # Upgrade cmake to latest
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null \
