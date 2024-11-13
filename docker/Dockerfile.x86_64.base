@@ -105,7 +105,7 @@ RUN if [ "$HAS_GPU" = "true" ]; then \
         updatedb; \
     fi
 
-# Setup ROS2 Foxy
+# Setup ROS2 Humble
 RUN locale-gen en_US en_US.UTF-8
 RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 ENV LANG=en_US.UTF-8
@@ -117,19 +117,19 @@ RUN apt-get update && apt-get install -y \
         python3-colcon-common-extensions \
         python3-rosdep \
         python3-vcstool \
-        ros-foxy-camera-calibration-parsers \
-        ros-foxy-camera-info-manager \
-        ros-foxy-desktop \
-        ros-foxy-launch-testing-ament-cmake \
-        ros-foxy-rqt* \
-        ros-foxy-turtlesim \
-        ros-foxy-v4l2-camera \
-        ros-foxy-realsense2-camera \
-        ros-foxy-vision-msgs \
-        ros-foxy-pcl-conversions \
-        ros-foxy-sensor-msgs-py \
-        ros-foxy-stereo-image-proc \
-        ros-foxy-pcl-ros \
+        ros-humble-camera-calibration-parsers \
+        ros-humble-camera-info-manager \
+        ros-humble-desktop \
+        ros-humble-launch-testing-ament-cmake \
+        ros-humble-rqt* \
+        ros-humble-turtlesim \
+        ros-humble-v4l2-camera \
+        ros-humble-realsense2-camera \
+        ros-humble-vision-msgs \
+        ros-humble-pcl-conversions \
+        ros-humble-sensor-msgs-py \
+        ros-humble-stereo-image-proc \
+        ros-humble-pcl-ros \
 && rm -rf /var/lib/apt/lists/*
 
 RUN rosdep init
@@ -155,7 +155,7 @@ ENV PATH="${PATH}:/opt/nvidia/tao"
 # Add MQTT binaries and libraries
 RUN apt-add-repository ppa:mosquitto-dev/mosquitto-ppa \
     && apt-get update \
-    && apt-get install -y mosquitto mosquitto-clients ros-foxy-rosbridge-library
+    && apt-get install -y mosquitto mosquitto-clients ros-humble-rosbridge-library
 
 RUN python3 -m pip install -U \
         paho-mqtt

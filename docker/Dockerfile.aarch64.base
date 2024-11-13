@@ -7,7 +7,7 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 # Docker file for aarch64 based Jetson device
-ARG BASE_IMAGE="dustynv/ros:foxy-ros-base-l4t-r32.7.1"
+ARG BASE_IMAGE="dustynv/ros:humble-ros-base-l4t-r32.7.1"
 FROM ${BASE_IMAGE}
 
 # Disable terminal interaction for apt
@@ -132,9 +132,9 @@ ENV LD_LIBRARY_PATH="/usr/lib/aarch64-linux-gnu/tegra-egl:${LD_LIBRARY_PATH}"
 # https://forums.developer.nvidia.com/t/error-importerror-usr-lib-aarch64-linux-gnu-libgomp-so-1-cannot-allocate-memory-in-static-tls-block-i-looked-through-available-threads-already/166494/3
 ENV LD_PRELOAD="/usr/lib/aarch64-linux-gnu/libgomp.so.1"
 
-RUN echo "source /opt/ros/foxy/install/setup.bash" > /opt/ros/foxy/setup.bash
+RUN echo "source /opt/ros/humble/install/setup.bash" > /opt/ros/humble/setup.bash
 
-# Restore using the default Foxy DDS middleware: FastRTPS
+# Restore using the default Humble DDS middleware: FastRTPS
 ENV RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
 # Install Triton server 2.13 from https://github.com/triton-inference-server/server/releases/tag/v2.13.0

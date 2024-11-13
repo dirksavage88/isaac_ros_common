@@ -9,8 +9,8 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 # Build ROS dependency
-echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
-source /opt/ros/foxy/setup.bash
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+source /opt/ros/humble/setup.bash
 
 sudo apt-get update
 rosdep update
